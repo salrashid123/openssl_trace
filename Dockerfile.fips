@@ -1,0 +1,16 @@
+FROM debian:latest
+RUN apt-get update && apt-get install gcc build-essential git wget curl -y
+
+WORKDIR /apps
+
+# FIPS
+RUN wget https://www.openssl.org/source/openssl-fips-2.0.16.tar.gz && tar -xzvf openssl-fips-2.0.16.tar.gz
+RUN cd openssl-fips-2.0.16 && ./config && make && make install
+
+RUN wget https://www.openssl.org/source/openssl-1.0.1e.tar.gz && tar -xzvf openssl-1.0.1e.tar.gz
+RUN cd openssl-1.0.1e && ./config fips shared enable-ssl-trace && make && make install_sw
+
+ENV LD_LIBRARY_PATH /usr/local/lib/
+
+ENTRYPOINT ["/usr/local/ssl/bin/openssl"]
+
