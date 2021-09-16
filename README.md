@@ -9,17 +9,8 @@ You can use this to view the low-level TLS traffic between a client and server a
 
 ### FIPS or NO FIPS
 
-The FIPS version uses `openssl-1.0.1f` and `openssl-fips-2.0.16`
+- openssl `1.1.1i`
 
-```bash
-$ docker run  docker.io/salrashid123/openssl:fips version
-OpenSSL 1.0.1f-fips 6 Jan 2014
-
-$ docker run -e "OPENSSL_FIPS=0" docker.io/salrashid123/openssl:fips version
-OpenSSL 1.0.1f-fips 6 Jan 2014
-```
-
-or
 
 ```bash
 $ docker run  docker.io/salrashid123/openssl version
@@ -27,6 +18,18 @@ OpenSSL 1.1.1i  8 Dec 2020
 
 $ docker run -e "OPENSSL_FIPS=0" docker.io/salrashid123/openssl version
 FIPS mode not supported.
+```
+
+- openssl `1.0.1f`
+
+The FIPS version uses `openssl-1.0.1f` and `openssl-fips-2.0.16` (you can use this to try out the old stuff)
+
+```bash
+$ docker run  docker.io/salrashid123/openssl:fips version
+OpenSSL 1.0.1f-fips 6 Jan 2014
+
+$ docker run -e "OPENSSL_FIPS=0" docker.io/salrashid123/openssl:fips version
+OpenSSL 1.0.1f-fips 6 Jan 2014
 ```
 
 #### With server TLS
