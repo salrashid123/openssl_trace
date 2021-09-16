@@ -1,9 +1,9 @@
 ### OpenSSL docker with TLS trace enabled (`enable-ssl-trace`) and FIPS
 
 
-Simple docker container with openssl `1.1.1i` which has TLS trace and FIPS enabled.
+Simple docker container with openssl `1.1.1i` which has TLS trace and an old version where FIPS is enabled.
 
-You can use this to view the low-level TLS traffic between a client and server and use openssl in fips compatible mode too
+You can use this to view the low-level TLS traffic between a client and server and use openssl or manually toggle fips compatible mode too
 
 >> NOTE: to stop the containers, run `docker rm -f client server`
 
