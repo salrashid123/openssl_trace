@@ -1,34 +1,44 @@
-### OpenSSL docker with TLS trace enabled (`enable-ssl-trace`) and FIPS
+### OpenSSL 3.0.0 docker with TLS trace enabled (`enable-ssl-trace`) and FIPS (`enable-fips`)
 
 
-Simple docker container with openssl `1.1.1i` which has TLS trace and an old version `1.0.1f` where [FIPS mode](https://www.openssl.org/docs/fips.html) is added manually.
+Simple docker container with the brand new [openssl 3.0.0](https://wiki.openssl.org/index.php/OpenSSL_3.0) which has TLS trace and [FIPS 140-2 enabled by default](https://wiki.openssl.org/index.php/OpenSSL_3.0#Completing_the_installation_of_the_FIPS_Module)
 
-You can use this to view the low-level TLS traffic between a client and server and use openssl or manually toggle fips compatible mode too
+You can use this to view the low-level TLS traffic between a client and server and use openssl with FIPS provider.
+
+- `docker.io/salrashid123/openssl`
+- `docker.io/salrashid123/openssl:fips`
 
 >> NOTE: to stop the containers, run `docker rm -f client server`
 
 ### FIPS or NO FIPS
 
-- openssl `1.1.1i`
+- openssl `3.0.0` (COMPAT)
 
 
 ```bash
 $ docker run  docker.io/salrashid123/openssl version
-  OpenSSL 1.1.1i  8 Dec 2020
+    OpenSSL 3.0.0 7 sep 2021 (Library: OpenSSL 3.0.0 7 sep 2021)
 ```
 
-- openssl `1.0.1f`
-
-The FIPS version uses `openssl-1.0.1f` and `openssl-fips-2.0.16` (you can use this to try out the old stuff).  See [FIPS mode and TLS](https://wiki.openssl.org/index.php/FIPS_mode_and_TLS)
+- openssl `3.0.0` (FIPS)
 
 ```bash
-$ docker run -e "OPENSSL_FIPS=1" docker.io/salrashid123/openssl:fips version
-  OpenSSL 1.0.1f-fips 6 Jan 2014
+$ docker run  docker.io/salrashid123/openssl:fips list -providers
+Providers:
+  base
+    name: OpenSSL Base Provider
+    version: 3.0.0
+    status: active
+  fips
+    name: OpenSSL FIPS Provider
+    version: 3.0.0
+    status: active
 
 # since md5 is not supported in FIPS, you'll see an error
-$ docker run -e "OPENSSL_FIPS=1" docker.io/salrashid123/openssl:fips  md5 /etc/hosts
-  Error setting digest md5
-  139945507056384:error:060A80A3:digital envelope routines:FIPS_DIGESTINIT:disabled for fips:fips_md.c:180
+$ docker run docker.io/salrashid123/openssl:fips  md5 /etc/hosts
+  Error setting digest
+  40607CA1FC7E0000:error:0308010C:digital envelope routines:inner_evp_generic_fetch:unsupported:crypto/evp/evp_fetch.c:346:Global default library context, Algorithm (MD5 : 102), Properties ()
+  40607CA1FC7E0000:error:03000086:digital envelope routines:evp_md_init_internal:initialization error:crypto/evp/digest.c:234:
 ```
 
 #### With server TLS
@@ -238,89 +248,3 @@ You should see the decrypted traffic (in this case the HTTPS response from the s
 ![images/tls_decryption.png](images/tls_decryption.png)
 
 I've left a sample keylog file and associated tls capture (just load `tls.pcapng` in wireshark and then specify the path to `keylog.log` as the master-secret log file)
-
-
-### FIPS Ciphers
-
-- [https://wiki.openssl.org/index.php/FIPS_mode_and_TLS](https://wiki.openssl.org/index.php/FIPS_mode_and_TLS)
-
-```basg
-$ docker run  -e "OPENSSL_FIPS=1" -t docker.io/salrashid123/openssl:fips ciphers -v 'kRSA+FIPS:!TLSv1.2'
-AES256-SHA              SSLv3 Kx=RSA      Au=RSA  Enc=AES(256)  Mac=SHA1
-DES-CBC3-SHA            SSLv3 Kx=RSA      Au=RSA  Enc=3DES(168) Mac=SHA1
-AES128-SHA              SSLv3 Kx=RSA      Au=RSA  Enc=AES(128)  Mac=SHA1
-
-$ docker run  -e "OPENSSL_FIPS=1" -t docker.io/salrashid123/openssl:fips ciphers -v 'kRSA+FIPS'
-AES256-GCM-SHA384       TLSv1.2 Kx=RSA      Au=RSA  Enc=AESGCM(256) Mac=AEAD
-AES256-SHA256           TLSv1.2 Kx=RSA      Au=RSA  Enc=AES(256)  Mac=SHA256
-AES256-SHA              SSLv3 Kx=RSA      Au=RSA  Enc=AES(256)  Mac=SHA1
-DES-CBC3-SHA            SSLv3 Kx=RSA      Au=RSA  Enc=3DES(168) Mac=SHA1
-AES128-GCM-SHA256       TLSv1.2 Kx=RSA      Au=RSA  Enc=AESGCM(128) Mac=AEAD
-AES128-SHA256           TLSv1.2 Kx=RSA      Au=RSA  Enc=AES(128)  Mac=SHA256
-AES128-SHA              SSLv3 Kx=RSA      Au=RSA  Enc=AES(128)  Mac=SHA1
-
-
-$ docker run  -e "OPENSSL_FIPS=1" -t docker.io/salrashid123/openssl:fips ciphers -v 'TLSv1.2+FIPS:kRSA+FIPS:!eNULL:!aNULL'
-ECDHE-RSA-AES256-GCM-SHA384 TLSv1.2 Kx=ECDH     Au=RSA  Enc=AESGCM(256) Mac=AEAD
-ECDHE-ECDSA-AES256-GCM-SHA384 TLSv1.2 Kx=ECDH     Au=ECDSA Enc=AESGCM(256) Mac=AEAD
-ECDHE-RSA-AES256-SHA384 TLSv1.2 Kx=ECDH     Au=RSA  Enc=AES(256)  Mac=SHA384
-ECDHE-ECDSA-AES256-SHA384 TLSv1.2 Kx=ECDH     Au=ECDSA Enc=AES(256)  Mac=SHA384
-DHE-DSS-AES256-GCM-SHA384 TLSv1.2 Kx=DH       Au=DSS  Enc=AESGCM(256) Mac=AEAD
-DHE-RSA-AES256-GCM-SHA384 TLSv1.2 Kx=DH       Au=RSA  Enc=AESGCM(256) Mac=AEAD
-DHE-RSA-AES256-SHA256   TLSv1.2 Kx=DH       Au=RSA  Enc=AES(256)  Mac=SHA256
-DHE-DSS-AES256-SHA256   TLSv1.2 Kx=DH       Au=DSS  Enc=AES(256)  Mac=SHA256
-ECDH-RSA-AES256-GCM-SHA384 TLSv1.2 Kx=ECDH/RSA Au=ECDH Enc=AESGCM(256) Mac=AEAD
-ECDH-ECDSA-AES256-GCM-SHA384 TLSv1.2 Kx=ECDH/ECDSA Au=ECDH Enc=AESGCM(256) Mac=AEAD
-ECDH-RSA-AES256-SHA384  TLSv1.2 Kx=ECDH/RSA Au=ECDH Enc=AES(256)  Mac=SHA384
-ECDH-ECDSA-AES256-SHA384 TLSv1.2 Kx=ECDH/ECDSA Au=ECDH Enc=AES(256)  Mac=SHA384
-AES256-GCM-SHA384       TLSv1.2 Kx=RSA      Au=RSA  Enc=AESGCM(256) Mac=AEAD
-AES256-SHA256           TLSv1.2 Kx=RSA      Au=RSA  Enc=AES(256)  Mac=SHA256
-ECDHE-RSA-AES128-GCM-SHA256 TLSv1.2 Kx=ECDH     Au=RSA  Enc=AESGCM(128) Mac=AEAD
-ECDHE-ECDSA-AES128-GCM-SHA256 TLSv1.2 Kx=ECDH     Au=ECDSA Enc=AESGCM(128) Mac=AEAD
-ECDHE-RSA-AES128-SHA256 TLSv1.2 Kx=ECDH     Au=RSA  Enc=AES(128)  Mac=SHA256
-ECDHE-ECDSA-AES128-SHA256 TLSv1.2 Kx=ECDH     Au=ECDSA Enc=AES(128)  Mac=SHA256
-DHE-DSS-AES128-GCM-SHA256 TLSv1.2 Kx=DH       Au=DSS  Enc=AESGCM(128) Mac=AEAD
-DHE-RSA-AES128-GCM-SHA256 TLSv1.2 Kx=DH       Au=RSA  Enc=AESGCM(128) Mac=AEAD
-DHE-RSA-AES128-SHA256   TLSv1.2 Kx=DH       Au=RSA  Enc=AES(128)  Mac=SHA256
-DHE-DSS-AES128-SHA256   TLSv1.2 Kx=DH       Au=DSS  Enc=AES(128)  Mac=SHA256
-ECDH-RSA-AES128-GCM-SHA256 TLSv1.2 Kx=ECDH/RSA Au=ECDH Enc=AESGCM(128) Mac=AEAD
-ECDH-ECDSA-AES128-GCM-SHA256 TLSv1.2 Kx=ECDH/ECDSA Au=ECDH Enc=AESGCM(128) Mac=AEAD
-ECDH-RSA-AES128-SHA256  TLSv1.2 Kx=ECDH/RSA Au=ECDH Enc=AES(128)  Mac=SHA256
-ECDH-ECDSA-AES128-SHA256 TLSv1.2 Kx=ECDH/ECDSA Au=ECDH Enc=AES(128)  Mac=SHA256
-AES128-GCM-SHA256       TLSv1.2 Kx=RSA      Au=RSA  Enc=AESGCM(128) Mac=AEAD
-AES128-SHA256           TLSv1.2 Kx=RSA      Au=RSA  Enc=AES(128)  Mac=SHA256
-AES256-SHA              SSLv3 Kx=RSA      Au=RSA  Enc=AES(256)  Mac=SHA1
-DES-CBC3-SHA            SSLv3 Kx=RSA      Au=RSA  Enc=3DES(168) Mac=SHA1
-AES128-SHA              SSLv3 Kx=RSA      Au=RSA  Enc=AES(128)  Mac=SHA1
-```
-
-```bash
-docker run \
-  --name server \
-  -p 8081:8081 \
-  --net=host \
-  -e "OPENSSL_FIPS=1" \
-  -v `pwd`/html:/apps/ \
-  -v `pwd`/certs:/certs \
-  -t docker.io/salrashid123/openssl:fips s_server   \
-      -cert /certs/http_server.crt \
-      -key /certs/http_server.key \
-      -port 8081 \
-      -cipher 'TLSv1.2+FIPS:kRSA+FIPS:!eNULL:!aNULL' \
-      -CAfile /certs/tls-ca-chain.pem \
-      -tlsextdebug \
-      -WWW
-
-
-docker run \
-  --name client \
-  --net=host \
-  -e "OPENSSL_FIPS=1" \
-  -v `pwd`/certs/:/certs \
-  -t docker.io/salrashid123/openssl:fips s_client \
-       -connect localhost:8081 \
-       -cipher 'TLSv1.2+FIPS:kRSA+FIPS:!eNULL:!aNULL' \
-       -servername http.domain.com \
-       -CAfile /certs/tls-ca-chain.pem \
-       -tlsextdebug
-```
