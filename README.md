@@ -1,7 +1,7 @@
 ### OpenSSL docker with TLS trace enabled (`enable-ssl-trace`) and FIPS
 
 
-Simple docker container with openssl `1.1.1i` which has TLS trace and an old version where FIPS is enabled.
+Simple docker container with openssl `1.1.1i` which has TLS trace and an old version `1.0.1f` where [FIPS mode](https://www.openssl.org/docs/fips.html) is added manually.
 
 You can use this to view the low-level TLS traffic between a client and server and use openssl or manually toggle fips compatible mode too
 
@@ -14,22 +14,21 @@ You can use this to view the low-level TLS traffic between a client and server a
 
 ```bash
 $ docker run  docker.io/salrashid123/openssl version
-OpenSSL 1.1.1i  8 Dec 2020
-
-$ docker run -e "OPENSSL_FIPS=0" docker.io/salrashid123/openssl version
-FIPS mode not supported.
+  OpenSSL 1.1.1i  8 Dec 2020
 ```
 
 - openssl `1.0.1f`
 
-The FIPS version uses `openssl-1.0.1f` and `openssl-fips-2.0.16` (you can use this to try out the old stuff)
+The FIPS version uses `openssl-1.0.1f` and `openssl-fips-2.0.16` (you can use this to try out the old stuff).  See [FIPS mode and TLS](https://wiki.openssl.org/index.php/FIPS_mode_and_TLS)
 
 ```bash
-$ docker run  docker.io/salrashid123/openssl:fips version
-OpenSSL 1.0.1f-fips 6 Jan 2014
+$ docker run -e "OPENSSL_FIPS=1" docker.io/salrashid123/openssl:fips version
+  OpenSSL 1.0.1f-fips 6 Jan 2014
 
-$ docker run -e "OPENSSL_FIPS=0" docker.io/salrashid123/openssl:fips version
-OpenSSL 1.0.1f-fips 6 Jan 2014
+# since md5 is not supported in FIPS, you'll see an error
+$ docker run -e "OPENSSL_FIPS=1" docker.io/salrashid123/openssl:fips  md5 /etc/hosts
+  Error setting digest md5
+  139945507056384:error:060A80A3:digital envelope routines:FIPS_DIGESTINIT:disabled for fips:fips_md.c:180
 ```
 
 #### With server TLS
