@@ -16,13 +16,17 @@ RUN echo 'openssl_conf = openssl_init\n\
 \n\
 [openssl_init]\n\
 providers = provider_sect\n\
+alg_section = algorithm_sect\n\
 \n\
 [provider_sect]\n\
 fips = fips_sect\n\
-base = base_sect\n\
+default = default_sect\n\
 \n\
-[base_sect]\n\
-activate = 1\n\
+[default_sect]\n\
+# activate = 1\n\
+\n\
+[algorithm_sect]\n\
+default_properties = fips=yes\n\
 ' > /usr/local/ssl/openssl.cnf
 
 ENTRYPOINT ["openssl"]

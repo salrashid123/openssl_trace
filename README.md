@@ -25,10 +25,6 @@ $ docker run  docker.io/salrashid123/openssl version
 ```bash
 $ docker run  docker.io/salrashid123/openssl:fips list -providers
 Providers:
-  base
-    name: OpenSSL Base Provider
-    version: 3.0.0
-    status: active
   fips
     name: OpenSSL FIPS Provider
     version: 3.0.0
@@ -40,6 +36,8 @@ $ docker run docker.io/salrashid123/openssl:fips  md5 /etc/hosts
   40607CA1FC7E0000:error:0308010C:digital envelope routines:inner_evp_generic_fetch:unsupported:crypto/evp/evp_fetch.c:346:Global default library context, Algorithm (MD5 : 102), Properties ()
   40607CA1FC7E0000:error:03000086:digital envelope routines:evp_md_init_internal:initialization error:crypto/evp/digest.c:234:
 ```
+
+The [default provider](https://wiki.openssl.org/index.php/OpenSSL_3.0#Providers) is set inactive in the fips Dockerfile
 
 #### With server TLS
 
