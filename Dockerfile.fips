@@ -23,7 +23,7 @@ fips = fips_sect\n\
 default = default_sect\n\
 \n\
 [default_sect]\n\
-# activate = 1\n\
+activate = 1\n\
 \n\
 [algorithm_sect]\n\
 default_properties = fips=yes\n\
