@@ -55,7 +55,7 @@ docker run \
   --net=host \
   -v `pwd`/html:/apps/ \
   -v `pwd`/certs:/certs \
-  -t docker.io/salrashid123/openssl s_server   \
+  -ti docker.io/salrashid123/openssl s_server   \
       -cert /certs/http_server.crt \
       -key /certs/http_server.key \
       -port 8081 \
@@ -70,7 +70,7 @@ docker run \
   --name client \
   --net=host \
   -v `pwd`/certs/:/certs \
-  -t docker.io/salrashid123/openssl s_client \
+  -ti docker.io/salrashid123/openssl s_client \
        -connect localhost:8081 \
        -servername http.domain.com \
        -CAfile /certs/tls-ca-chain.pem \
@@ -97,7 +97,7 @@ docker run \
   --net=host \
   -v `pwd`/html:/apps/ \
   -v `pwd`/certs:/certs \
-  -t docker.io/salrashid123/openssl s_server \
+  -ti docker.io/salrashid123/openssl s_server \
        -cert /certs/http_server.crt \
        -key /certs/http_server.key \
        -port 8081 \
@@ -113,7 +113,7 @@ docker run  \
   --name client \
   --net=host \
   -v `pwd`/certs/:/certs \
-  -t docker.io/salrashid123/openssl s_client \
+  -ti docker.io/salrashid123/openssl s_client \
        -connect localhost:8081 \
        -servername http.domain.com \
        -CAfile /certs/tls-ca-chain.pem \
@@ -144,7 +144,7 @@ docker run \
   -p 8081:8081 \
   --net=host -v `pwd`/html:/apps/ \
   -v `pwd`/certs:/certs \
-  -t docker.io/salrashid123/openssl s_server \
+  -ti docker.io/salrashid123/openssl s_server \
        -status_file /certs/http_server_ocsp_resp_valid.bin \
        -cert /certs/http_server.crt \
        -key /certs/http_server.key \
@@ -164,7 +164,7 @@ docker run \
  --name client \
  --net=host \
  -v `pwd`/certs/:/certs \
- -t docker.io/salrashid123/openssl s_client \
+ -ti docker.io/salrashid123/openssl s_client \
       -connect localhost:8081 \
       -servername http.domain.com \
       -CAfile /certs/tls-ca-chain.pem \
@@ -226,7 +226,7 @@ docker run \
   --net=host \
   -v `pwd`/html:/apps/ \
   -v `pwd`/certs:/certs \
-  -t docker.io/salrashid123/openssl s_server   \
+  -ti docker.io/salrashid123/openssl s_server   \
       -cert /certs/http_server.crt \
       -key /certs/http_server.key \
       -port 8081 \
@@ -252,3 +252,15 @@ You should see the decrypted traffic (in this case the HTTPS response from the s
 ![images/tls_decryption.png](images/tls_decryption.png)
 
 I've left a sample keylog file and associated tls capture (just load `tls.pcapng` in wireshark and then specify the path to `keylog.log` as the master-secret log file)
+
+
+---
+
+
+### FIPS
+
+```bash
+$ docker run  -t docker.io/salrashid123/openssl:fips ciphers --provider fips
+
+TLS_AES_256_GCM_SHA384:TLS_AES_128_GCM_SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES128-SHA:DHE-RSA-AES128-SHA:RSA-PSK-AES256-GCM-SHA384:DHE-PSK-AES256-GCM-SHA384:AES256-GCM-SHA384:PSK-AES256-GCM-SHA384:RSA-PSK-AES128-GCM-SHA256:DHE-PSK-AES128-GCM-SHA256:AES128-GCM-SHA256:PSK-AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:ECDHE-PSK-AES256-CBC-SHA384:ECDHE-PSK-AES256-CBC-SHA:SRP-RSA-AES-256-CBC-SHA:SRP-AES-256-CBC-SHA:RSA-PSK-AES256-CBC-SHA384:DHE-PSK-AES256-CBC-SHA384:RSA-PSK-AES256-CBC-SHA:DHE-PSK-AES256-CBC-SHA:AES256-SHA:PSK-AES256-CBC-SHA384:PSK-AES256-CBC-SHA:ECDHE-PSK-AES128-CBC-SHA256:ECDHE-PSK-AES128-CBC-SHA:SRP-RSA-AES-128-CBC-SHA:SRP-AES-128-CBC-SHA:RSA-PSK-AES128-CBC-SHA256:DHE-PSK-AES128-CBC-SHA256:RSA-PSK-AES128-CBC-SHA:DHE-PSK-AES128-CBC-SHA:AES128-SHA:PSK-AES128-CBC-SHA256:PSK-AES128-CBC-SHA
+```
