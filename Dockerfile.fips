@@ -20,9 +20,9 @@ alg_section = algorithm_sect\n\
 \n\
 [provider_sect]\n\
 fips = fips_sect\n\
-default = default_sect\n\
+base = base_sect\n\
 \n\
-[default_sect]\n\
+[base_sect]\n\
 activate = 1\n\
 \n\
 [algorithm_sect]\n\

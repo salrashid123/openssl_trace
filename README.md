@@ -25,8 +25,8 @@ $ docker run  docker.io/salrashid123/openssl version
 ```bash
 $ docker run  docker.io/salrashid123/openssl:fips list -providers
 Providers:
-  default
-    name: OpenSSL Default Provider
+  base
+    name: OpenSSL Base Provider
     version: 3.0.0
     status: active
   fips
@@ -259,8 +259,31 @@ I've left a sample keylog file and associated tls capture (just load `tls.pcapng
 
 ### FIPS
 
+- [https://www.openssl.org/docs/manmaster/man7/fips_module.html](https://www.openssl.org/docs/manmaster/man7/fips_module.html)
+
 ```bash
 $ docker run  -t docker.io/salrashid123/openssl:fips ciphers --provider fips
 
 TLS_AES_256_GCM_SHA384:TLS_AES_128_GCM_SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES128-SHA:DHE-RSA-AES128-SHA:RSA-PSK-AES256-GCM-SHA384:DHE-PSK-AES256-GCM-SHA384:AES256-GCM-SHA384:PSK-AES256-GCM-SHA384:RSA-PSK-AES128-GCM-SHA256:DHE-PSK-AES128-GCM-SHA256:AES128-GCM-SHA256:PSK-AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:ECDHE-PSK-AES256-CBC-SHA384:ECDHE-PSK-AES256-CBC-SHA:SRP-RSA-AES-256-CBC-SHA:SRP-AES-256-CBC-SHA:RSA-PSK-AES256-CBC-SHA384:DHE-PSK-AES256-CBC-SHA384:RSA-PSK-AES256-CBC-SHA:DHE-PSK-AES256-CBC-SHA:AES256-SHA:PSK-AES256-CBC-SHA384:PSK-AES256-CBC-SHA:ECDHE-PSK-AES128-CBC-SHA256:ECDHE-PSK-AES128-CBC-SHA:SRP-RSA-AES-128-CBC-SHA:SRP-AES-128-CBC-SHA:RSA-PSK-AES128-CBC-SHA256:DHE-PSK-AES128-CBC-SHA256:RSA-PSK-AES128-CBC-SHA:DHE-PSK-AES128-CBC-SHA:AES128-SHA:PSK-AES128-CBC-SHA256:PSK-AES128-CBC-SHA
+
+
+docker run   -ti docker.io/salrashid123/openssl:fips s_client \
+   -connect www.google.com:443  \
+   -servername www.google.com -tlsextdebug -trace
+```
+
+Sample c program that confirms FIPS status
+
+```bash
+docker run  -v `pwd`/cli:/cli --entrypoint /bin/bash -ti docker.io/salrashid123/openssl:fips 
+```
+then
+
+```bash
+cd /cli
+gcc main.c -lcrypto -o main
+./main
+FIPS provider loaded
+Base provider loaded
+0679246d6c4216de0daa08e5523fb2674db2b6599c3b72ff946b488a15290b62
 ```
