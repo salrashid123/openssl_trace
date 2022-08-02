@@ -39,6 +39,10 @@ $ docker run docker.io/salrashid123/openssl:fips  md5 /etc/hosts
   Error setting digest
   40607CA1FC7E0000:error:0308010C:digital envelope routines:inner_evp_generic_fetch:unsupported:crypto/evp/evp_fetch.c:346:Global default library context, Algorithm (MD5 : 102), Properties ()
   40607CA1FC7E0000:error:03000086:digital envelope routines:evp_md_init_internal:initialization error:crypto/evp/digest.c:234:
+
+$ docker run docker.io/salrashid123/openssl  md5 /etc/hosts
+  MD5(/etc/hosts)= 5a0ff51aeb7b008b497b1ae52adce747
+  
 ```
 
 The [default provider](https://wiki.openssl.org/index.php/OpenSSL_3.0#Providers) is set active in the fips Dockerfile
@@ -286,4 +290,22 @@ gcc main.c -lcrypto -o main
 FIPS provider loaded
 Base provider loaded
 0679246d6c4216de0daa08e5523fb2674db2b6599c3b72ff946b488a15290b62
+```
+
+
+### Google CA
+
+Included in this repo is the specific set of [Google CAs](https://pki.goog/repository/) (as of 8/2/22)
+
+```bash
+docker run   --name client  \
+  --net=host \
+  -v `pwd`/certs/:/certs \
+  -ti docker.io/salrashid123/openssl s_client  \
+        -connect storage.googleapis.com:443  \
+        -servername storage.googleapis.com   \
+        -CAfile  /certs/google_ca.pem   \
+        -tls1_3  \
+        -tlsextdebug \
+        -trace
 ```
