@@ -207,6 +207,10 @@ docker run \
    -text
 ```
 
+>> Note, openssl currently support ocsp stapling on the server side (eg, the server sends the stapled response back).  THe client version of this (eg, the client sends the stapled response itself is described in [https://datatracker.ietf.org/doc/html/rfc8446#section-4.4.2.1](https://datatracker.ietf.org/doc/html/rfc8446#section-4.4.2.1) but not implemented anywhere AFAIK
+
+---
+
 
 if you want to generate and use your own CA, see [Create Root CA Key and cert](https://github.com/salrashid123/ca_scratchpad)
 
