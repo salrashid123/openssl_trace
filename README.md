@@ -1,29 +1,35 @@
-### OpenSSL 3.0.0 docker with TLS trace enabled (`enable-ssl-trace`) and FIPS (`enable-fips`)
+### OpenSSL 3 docker with TLS trace enabled (`enable-ssl-trace`) and FIPS (`enable-fips`)
 
 
-Simple docker container with the brand new [openssl 3.0.0](https://wiki.openssl.org/index.php/OpenSSL_3.0) which has TLS trace and [FIPS 140-2 enabled by default](https://wiki.openssl.org/index.php/OpenSSL_3.0#Completing_the_installation_of_the_FIPS_Module)
+Simple docker container with the brand new [openssl 3](https://wiki.openssl.org/index.php/OpenSSL_3.0) which has TLS trace and [FIPS 140-2 enabled by default](https://wiki.openssl.org/index.php/OpenSSL_3.0#Completing_the_installation_of_the_FIPS_Module)
 
 You can use this to view the low-level TLS traffic between a client and server and use openssl with FIPS provider.
 
 - `docker.io/salrashid123/openssl`
 - `docker.io/salrashid123/openssl:fips`
 
+- `docker.io/salrashid123/openssl:3.4.0`
+- `docker.io/salrashid123/openssl:3.4.0.fips`
+
+- `docker.io/salrashid123/openssl:3.0.0`
+- `docker.io/salrashid123/openssl:3.0.0.fips`
+
 >> NOTE: to stop the containers, run `docker rm -f client server`
 
 ### FIPS or NO FIPS
 
-- openssl `3.0.0` (COMPAT)
+- openssl `3` (COMPAT)
 
 
 ```bash
-$ docker run  docker.io/salrashid123/openssl version
-    OpenSSL 3.0.0 7 sep 2021 (Library: OpenSSL 3.0.0 7 sep 2021)
+$ docker run  docker.io/salrashid123/openssl:3.4.0 version
+    OpenSSL 3.4.0 22 Oct 2024 (Library: OpenSSL 3.4.0 22 Oct 2024)
 ```
 
-- openssl `3.0.0` (FIPS)
+- openssl `3` (FIPS)
 
 ```bash
-$ docker run  docker.io/salrashid123/openssl:fips list -providers
+$ docker run  docker.io/salrashid123/openssl:3.4.0.fips list -providers
 Providers:
   base
     name: OpenSSL Base Provider
